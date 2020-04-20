@@ -17,7 +17,7 @@ public class CameraRotation : MonoBehaviour {
 	void Update () {
 
         followPlayer();
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, rotRef.transform.rotation,7f);
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, rotRef.transform.rotation,4f);
     }
 
 

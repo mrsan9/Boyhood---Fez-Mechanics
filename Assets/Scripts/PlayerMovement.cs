@@ -21,34 +21,50 @@ public class PlayerMovement : MonoBehaviour {
     GameObject currCube = null;
 
     float horz;
-    bool grounded;
+    bool grounded,grounded2;
     float jump;
     
     private void Update()
     {       
-       
-
-        transform.Translate(new Vector3(horz * moveSpeed * Time.deltaTime, jump, 0f));
-
+     
         isMoving = (horz > 0 || horz < 0);
+        //if(grounded)
+        //transform.Translate(new Vector3(horz * moveSpeed * Time.deltaTime, jump, 0f));
+       
+        castRays();        
+    }
 
-        castRays();
+    private void FixedUpdate()
+    {
         keyInputs();
-    }        
+        
+        if (RotRef.side % 2 == 0) { 
+            
+            rb.velocity = new Vector3(horz * moveSpeed, rb.velocity.y, rb.velocity.z);
+        }
+        else
+            rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y, horz * moveSpeed);
+
+        if (Input.GetButtonDown("Jump") && grounded2)
+        {
+            //rb.AddForce(Vector3.up * jumpSpeed);
+            rb.velocity = new Vector3(moveSpeed*2f,jumpSpeed,0f)* Time.fixedDeltaTime;
+        }
+    }
 
     void keyInputs()
     {
         horz = Input.GetAxisRaw("Horizontal");
-        if (Input.GetButtonDown("Jump") && grounded)
-        {
-            jump = jumpSpeed; StartCoroutine(fall());
-        }
+
+        grounded2 = (Physics.Raycast(transform.position, Vector3.down, out hit, 0.6f, LayerMask.GetMask("ground")) ||
+            Physics.Raycast(transform.position+new Vector3(0.7f,0,0), Vector3.down, out hit, 0.6f, LayerMask.GetMask("ground")) ||
+            Physics.Raycast(transform.position- new Vector3(0.7f, 0, 0), Vector3.down, out hit, 0.6f, LayerMask.GetMask("ground")));
     }
-   // bool isPlaced = false;
+  
     RaycastHit hit,hit1;
     RaycastHit[] hits;
     GameObject nearestObj = null;
-    //float[] distances;
+
     int indexLane = 0;
 
     Vector3 targetp;
@@ -77,7 +93,7 @@ public class PlayerMovement : MonoBehaviour {
                 //targetp.y = rayObject.transform.position.y;
                 //targetp.x *= 1000f;
             }
-            hits = Physics.RaycastAll(rayObject.transform.position, targetp, 1000f);
+            hits = Physics.RaycastAll(rayObject.transform.position, targetp, 1000f,LayerMask.GetMask("ground"));
             
             Debug.DrawLine(rayObject.transform.position, targetp, Color.red);
             if (hits.Length > 0)
@@ -158,7 +174,7 @@ public class PlayerMovement : MonoBehaviour {
                     //targetp.x *= 1000f;
                 }
                 Debug.DrawLine(rayObject.transform.position, targetp, Color.blue);
-                if (Physics.Raycast(rayObject.transform.position, targetp, out hit1, 1000f) && !grounded)
+                if (Physics.Raycast(rayObject.transform.position, targetp, out hit1, 1000f, LayerMask.GetMask("ground")) && !grounded)
                 {
                     Vector3 pos = transform.position;
                     if (RotRef.side % 2 == 0)
@@ -203,11 +219,6 @@ public class PlayerMovement : MonoBehaviour {
 
     }
 
-    IEnumerator fall()
-    {
-        yield return new WaitForSeconds(0.05f);
-        jump = 0;
-    }
 
    
     /* private static float WrapAngle(float angle)

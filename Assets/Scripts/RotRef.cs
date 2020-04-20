@@ -35,7 +35,7 @@ public class RotRef : MonoBehaviour {
         {
             rot += 90; side--;//Debug.Log("SIDE: "+side);
             initRotPlayer.y += 90;
-            pm.castRays();
+            //pm.castRays();
             //if (PlayerMovement.disPlaced) {
             //    isRot = true; Invoke("playerReset", 0.1f);
 
@@ -43,9 +43,9 @@ public class RotRef : MonoBehaviour {
         }
         if (Input.GetKeyDown(KeyCode.D))
         {
-            rot -= 90; side++; Debug.Log("SIDE: " + side);
+            rot -= 90; side++; //Debug.Log("SIDE: " + side);
             initRotPlayer.y -= 90;
-            pm.castRays();
+            //pm.castRays();
             //if (PlayerMovement.disPlaced) {
             //   isRot = true; Invoke("playerReset", 0.1f);
             //}
@@ -53,17 +53,18 @@ public class RotRef : MonoBehaviour {
         }
 
         initRot.y = rot;
-        
 
+       // Debug.Log("SIDE: "+side);
         transform.rotation = Quaternion.Euler(initRot);
         
         pont.transform.rotation = transform.rotation;
-        StartCoroutine(PlayerRotateWithDelay());
+        //pm.transform.rotation = Quaternion.Euler(initRotPlayer);
+         StartCoroutine(PlayerRotateWithDelay());
     }
 
     IEnumerator PlayerRotateWithDelay()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(0.5f);
         pm.transform.rotation = Quaternion.Euler(initRotPlayer);
     }
 
