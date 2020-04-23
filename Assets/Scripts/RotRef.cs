@@ -34,6 +34,10 @@ public class RotRef : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.A))
         {
             rot += 90; side--;//Debug.Log("SIDE: "+side);
+            if (side == -2) side = 2;
+            if (side == -3) side = 1;
+            if (side == -1) side = 3;
+
             initRotPlayer.y += 90;
             //pm.castRays();
             //if (PlayerMovement.disPlaced) {
@@ -44,6 +48,7 @@ public class RotRef : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.D))
         {
             rot -= 90; side++; //Debug.Log("SIDE: " + side);
+           
             initRotPlayer.y -= 90;
             //pm.castRays();
             //if (PlayerMovement.disPlaced) {

@@ -10,7 +10,7 @@ public class PlayerMovement : MonoBehaviour {
     [SerializeField]GameObject rayObject;
     [SerializeField] Transform disObj;
     [HideInInspector]
-    public static bool isMoving,disPlaced;
+    public static bool isMoving,isJumping;
   
     private void Start()
     {       
@@ -34,31 +34,55 @@ public class PlayerMovement : MonoBehaviour {
         castRays();        
     }
 
+    int dir = 1;
     private void FixedUpdate()
     {
         keyInputs();
-        
-        if (RotRef.side % 2 == 0) { 
-            
-            rb.velocity = new Vector3(horz * moveSpeed, rb.velocity.y, rb.velocity.z);
+
+        if (horz != 0 && grounded2)
+        {
+            if (RotRef.side % 2 == 0)
+            {
+                if (RotRef.side == 0) dir = 1;
+                else dir = -1;
+
+                rb.velocity = new Vector3(horz * moveSpeed * dir, rb.velocity.y, rb.velocity.z);
+            }
+            else
+            {
+                if (RotRef.side == 1) dir = 1;
+                else dir = -1;
+
+                rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y, horz * moveSpeed * dir);
+            }
         }
-        else
-            rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y, horz * moveSpeed);
 
         if (Input.GetButtonDown("Jump") && grounded2)
         {
-            //rb.AddForce(Vector3.up * jumpSpeed);
-            rb.velocity = new Vector3(moveSpeed*2f,jumpSpeed,0f)* Time.fixedDeltaTime;
+
+            if (RotRef.side % 2 == 0)
+            {
+                rb.velocity = new Vector3(moveSpeed * 4f * dir, jumpSpeed, 0f) * Time.fixedDeltaTime;
+            }
+            else
+            {
+                rb.velocity = new Vector3(0f, jumpSpeed, moveSpeed * 4f * dir) * Time.fixedDeltaTime;
+            }
+
+
+            isJumping = true;
         }
+        if (grounded2) isJumping = false;
     }
 
     void keyInputs()
     {
         horz = Input.GetAxisRaw("Horizontal");
 
-        grounded2 = (Physics.Raycast(transform.position, Vector3.down, out hit, 0.6f, LayerMask.GetMask("ground")) ||
-            Physics.Raycast(transform.position+new Vector3(0.7f,0,0), Vector3.down, out hit, 0.6f, LayerMask.GetMask("ground")) ||
-            Physics.Raycast(transform.position- new Vector3(0.7f, 0, 0), Vector3.down, out hit, 0.6f, LayerMask.GetMask("ground")));
+        grounded2 = (Physics.Raycast(transform.position, Vector3.down, out hit, 0.7f, LayerMask.GetMask("ground")) ||
+            Physics.Raycast(transform.position+new Vector3(0.7f,0,0), Vector3.down, out hit, 0.7f, LayerMask.GetMask("ground")) ||
+            Physics.Raycast(transform.position- new Vector3(0.7f, 0, 0), Vector3.down, out hit, 0.7f, LayerMask.GetMask("ground")));
+                        
     }
   
     RaycastHit hit,hit1;
@@ -71,7 +95,7 @@ public class PlayerMovement : MonoBehaviour {
 
     public void castRays()
     {
-        if (isMoving)
+        if (isMoving || isJumping)
         {
             grounded = Physics.Raycast(transform.position, Vector3.down, out hit, 0.6f, LayerMask.GetMask("ground")) ? true : false;
             // Debug.Log(RotRef.side % 2);
