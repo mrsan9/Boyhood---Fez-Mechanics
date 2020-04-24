@@ -21,7 +21,8 @@ public class PlayerMovement : MonoBehaviour {
     GameObject currCube = null;
 
     float horz;
-    bool grounded,grounded2;
+    [HideInInspector]
+    public bool grounded,grounded2;
     float jump;
     
     private void Update()
@@ -37,7 +38,18 @@ public class PlayerMovement : MonoBehaviour {
     int dir = 1;
     private void FixedUpdate()
     {
-        keyInputs();
+        keyInputs();        
+    }
+
+    void keyInputs()
+    {
+        horz = Input.GetAxisRaw("Horizontal");
+
+        grounded2 = (Physics.Raycast(transform.position, Vector3.down, out hit, 0.7f, LayerMask.GetMask("ground")) ||
+            Physics.Raycast(transform.position+new Vector3(0.7f,0,0), Vector3.down, out hit, 0.7f, LayerMask.GetMask("ground")) ||
+            Physics.Raycast(transform.position- new Vector3(0.7f, 0, 0), Vector3.down, out hit, 0.7f, LayerMask.GetMask("ground")));
+
+       
 
         if (horz != 0 && grounded2)
         {
@@ -55,6 +67,7 @@ public class PlayerMovement : MonoBehaviour {
 
                 rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y, horz * moveSpeed * dir);
             }
+            
         }
 
         if (Input.GetButtonDown("Jump") && grounded2)
@@ -70,19 +83,9 @@ public class PlayerMovement : MonoBehaviour {
             }
 
 
-            isJumping = true;
+            isJumping = true;            
         }
-        if (grounded2) isJumping = false;
-    }
-
-    void keyInputs()
-    {
-        horz = Input.GetAxisRaw("Horizontal");
-
-        grounded2 = (Physics.Raycast(transform.position, Vector3.down, out hit, 0.7f, LayerMask.GetMask("ground")) ||
-            Physics.Raycast(transform.position+new Vector3(0.7f,0,0), Vector3.down, out hit, 0.7f, LayerMask.GetMask("ground")) ||
-            Physics.Raycast(transform.position- new Vector3(0.7f, 0, 0), Vector3.down, out hit, 0.7f, LayerMask.GetMask("ground")));
-                        
+      
     }
   
     RaycastHit hit,hit1;
@@ -95,9 +98,14 @@ public class PlayerMovement : MonoBehaviour {
 
     public void castRays()
     {
+
+       
         if (isMoving || isJumping)
         {
+           
             grounded = Physics.Raycast(transform.position, Vector3.down, out hit, 0.6f, LayerMask.GetMask("ground")) ? true : false;
+
+            //if (grounded) isJumping = false;
             // Debug.Log(RotRef.side % 2);
             if (RotRef.side % 2 == 0)
             {
