@@ -11,19 +11,22 @@ public class PlayerMovement : MonoBehaviour {
     [SerializeField] Transform disObj;
     [HideInInspector]
     public static bool isMoving,isJumping;
-  
+    public SpriteRenderer playerRender;
+    Animator AM;
+
     private void Start()
     {       
-        isMoving = false; 
+        isMoving = false;
+        AM = playerRender.gameObject.GetComponent <Animator>();
         rb = GetComponent<Rigidbody>();       
     }
 
     GameObject currCube = null;
 
-    float horz;
+    float horz,vert;
     [HideInInspector]
-    public bool grounded,grounded2;
-    float jump;
+    public bool grounded,grounded2,walled,wallMove;
+    float jump;  
     
     private void Update()
     {       
@@ -44,14 +47,16 @@ public class PlayerMovement : MonoBehaviour {
     void keyInputs()
     {
         horz = Input.GetAxisRaw("Horizontal");
+        vert = Input.GetAxisRaw("Vertical");
 
         grounded2 = (Physics.Raycast(transform.position, Vector3.down, out hit, 0.7f, LayerMask.GetMask("ground")) ||
             Physics.Raycast(transform.position+new Vector3(0.7f,0,0), Vector3.down, out hit, 0.7f, LayerMask.GetMask("ground")) ||
             Physics.Raycast(transform.position- new Vector3(0.7f, 0, 0), Vector3.down, out hit, 0.7f, LayerMask.GetMask("ground")));
 
-       
+        walled = (Physics.Raycast(transform.position, transform.forward, out hit, 5f, LayerMask.GetMask("ladder")));
 
-        if (horz != 0 && grounded2)
+
+        if (horz != 0 && grounded2 && !wallMove)
         {
             if (RotRef.side % 2 == 0)
             {
@@ -67,7 +72,43 @@ public class PlayerMovement : MonoBehaviour {
 
                 rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y, horz * moveSpeed * dir);
             }
-            
+
+            if (horz > 0) playerRender.flipX = false;
+            else
+                playerRender.flipX = true;
+
+            AM.SetBool("isRun", true);
+
+        }
+        else
+        {
+            AM.SetBool("isRun", false);
+        }
+
+        
+
+        if (wallMove)
+        {
+            if (!walled) wallMove = false;
+
+            if (RotRef.side % 2 == 0)
+            {
+                if (RotRef.side == 0) dir = 1;
+                else dir = -1;
+
+                rb.velocity = new Vector3(horz * moveSpeed * dir, vert*moveSpeed, rb.velocity.z);
+            }
+            else
+            {
+                if (RotRef.side == 1) dir = 1;
+                else dir = -1;
+
+                rb.velocity = new Vector3(rb.velocity.x, vert * moveSpeed, horz * moveSpeed * dir);
+            }
+
+            if (horz > 0) playerRender.flipX = false;
+            else
+                playerRender.flipX = true;
         }
 
         if (Input.GetButtonDown("Jump") && grounded2)
@@ -84,6 +125,15 @@ public class PlayerMovement : MonoBehaviour {
 
 
             isJumping = true;            
+        }
+
+        if (Input.GetKeyDown(KeyCode.UpArrow) && walled)
+        {
+            wallMove = true;
+        }
+        if (Input.GetKeyDown(KeyCode.DownArrow) && wallMove && grounded2)
+        {
+            wallMove = false;
         }
       
     }
