@@ -7,6 +7,9 @@ public class GameController : MonoBehaviour {
 
     public static GameController THIS;
 
+    public int index;
+    public bool isLevelDone;
+
     private void Awake()
     {
         if (THIS == null)
@@ -30,8 +33,8 @@ public class GameController : MonoBehaviour {
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape))
-            Restart();
+       // if (Input.GetKeyDown(KeyCode.Escape))
+           // Restart();
     }
    
 }

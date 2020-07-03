@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class RotRef : MonoBehaviour {
 
     float rot;
@@ -11,8 +12,8 @@ public class RotRef : MonoBehaviour {
     public Transform player;
     public Transform pont;
     public static bool isRot;
-    public PlayerMovement pm;
-   
+    public Player pm;
+    public Material sky;
 
     void Start()
     {
@@ -26,12 +27,19 @@ public class RotRef : MonoBehaviour {
 
     float angle;
 
+    float time;
+    public float skyRotSpeed=1f;
     void Update()
     {
 
+        time += Time.deltaTime;
+        if (time >= 360) time = 0f;
+
+        sky.SetFloat("_Rotation",time*skyRotSpeed);
+
         if (Mathf.Abs(side) == 4) side = 0;
 
-        if (pm.grounded2) {
+        if (pm.onGround) {
            
         if (Input.GetKeyDown(KeyCode.A))
         {
@@ -39,7 +47,7 @@ public class RotRef : MonoBehaviour {
             if (side == -2) side = 2;
             if (side == -3) side = 1;
             if (side == -1) side = 3;
-                PlayerMovement.isJumping = false;
+                Player.isJumping = false;
 
                 initRotPlayer.y += 90;
             StartCoroutine(PlayerRotateWithDelay());
@@ -53,7 +61,7 @@ public class RotRef : MonoBehaviour {
         {
             rot -= 90; side++; //Debug.Log("SIDE: " + side);
 
-                PlayerMovement.isJumping = false;
+                Player.isJumping = false;
                 initRotPlayer.y -= 90;
             StartCoroutine(PlayerRotateWithDelay());
             //pm.castRays();
@@ -67,7 +75,7 @@ public class RotRef : MonoBehaviour {
 
         // Debug.Log("SIDE: "+side);
         transform.rotation = Quaternion.Euler(initRot);
-
+         
         pont.transform.rotation = transform.rotation;
         //pm.transform.rotation = Quaternion.Euler(initRotPlayer);
         }
