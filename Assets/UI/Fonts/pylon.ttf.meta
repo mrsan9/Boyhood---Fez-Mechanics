@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: ff9ba5605e0b35e4288c67f5267534d7
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Pylon
+  fontNames:
+  - Pylon
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 2dbcd1002942dc847b098de2a1266c90, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
